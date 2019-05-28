@@ -1,11 +1,6 @@
 <?php
 // 应用公共文件
 
-function http_host(){
-    $http = 'https://';
-    return $http.$_SERVER['HTTP_HOST'];
-}
-
 function bonus_random($total,$num,$min,$max){
     $data = array();
     if ($min * $num > $total) {
@@ -34,6 +29,12 @@ function bonus_random($total,$num,$min,$max){
 function getmicrotime(){
     list($usec, $sec) = explode(" ",microtime());
     return ((float)$usec + (float)$sec);
+}
+
+//获取13位时间戳
+function getMillisecond() {
+    list($t1, $t2) = explode(' ', microtime());
+    return (float)sprintf('%.0f',(floatval($t1)+floatval($t2))*1000);
 }
 
 function gen_params_sign($params){
@@ -65,7 +66,7 @@ function encrypt_data($data, $key = ''){
     if (empty($key)) {
         $key = config('param_key');
     }
-    $crypt = new Crypt3Des($key);
+    $crypt = new \Crypt3Des($key);
     $result = $crypt->encrypt($data);
     return $result;
 }
@@ -79,7 +80,7 @@ function decrypt_data($data, $dejson = true, $key = ''){
     if (empty($key)) {
         $key = config('param_key');
     }
-    $crypt = new Crypt3Des($key);
+    $crypt = new \Crypt3Des($key);
     $result = $crypt->decrypt($data);
     if ($dejson) {
         $res_data = array();
@@ -91,6 +92,7 @@ function decrypt_data($data, $dejson = true, $key = ''){
     }
     return $res_data;
 }
+
 /**
  *
  * @param  $mobile
@@ -98,12 +100,10 @@ function decrypt_data($data, $dejson = true, $key = ''){
  * 手机号验证
  */
 function check_mobile($mobile, $pattern = false) {
-
     if (!$pattern) {
         $pattern = '/(^1[345678]\d{9}$)/';
     }
-    $result = preg_match($pattern, $mobile, $match);
-
+    preg_match($pattern, $mobile, $match);
     if (empty($match)) {
         return false;
     }
@@ -112,8 +112,7 @@ function check_mobile($mobile, $pattern = false) {
 /**
  * @desc 获取客户端的ip地址
  */
-function get_client_ipaddr()
-{
+function get_client_ipaddr(){
     if (!empty($_SERVER ['HTTP_CLIENT_IP']) && filter_valid_ip($_SERVER ['HTTP_CLIENT_IP'])) {
         return $_SERVER ['HTTP_CLIENT_IP'];
     }
@@ -139,42 +138,18 @@ function get_client_ipaddr()
     }
     return $_SERVER ['REMOTE_ADDR'];
 }
+
 /**
+ *
  *@desc 验证IP地址有效性
  */
-function filter_valid_ip($ip)
-{
-    if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 |
-            FILTER_FLAG_IPV6 |
-            FILTER_FLAG_NO_PRIV_RANGE |
-            FILTER_FLAG_NO_RES_RANGE) === false
-    ) {
+function filter_valid_ip($ip){
+    if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6 | FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) === false){
         return false;
     }
     return true;
 }
-/**
- * @desc 获取客户端类型ID
- */
-function getClientId($clientname)
-{
-    $client_arr = C('CLIENT_NAME_ARR');
-    $source_client = strtolower($clientname);
-    return $client_arr[$source_client];
-}
-function getprovinceByip($ip){
-    $url = "http://api.map.baidu.com/location/ip?ak=q1pQnjOG28z8xsCaoby2oqLTLaPgelyq&coor=bd09ll&ip=".$ip;
-    $result = file_get_contents($url);
-    $re = json_decode($result,true);
 
-    if($re && $re['status'] == 0){
-        $province_name = $re['content']['address_detail']['province'];
-
-    }else{
-        $province_name = '北京市';
-    }
-    return $province_name;
-}
 /**
  * @desc 获取url的文件扩展名
  */
@@ -185,6 +160,7 @@ function getExt($url){
         return '';
     }
 }
+
 function sortArrByOneField(&$array, $field, $desc = false){
     $fieldArr = array();
     foreach ($array as $k => $v) {
@@ -193,11 +169,7 @@ function sortArrByOneField(&$array, $field, $desc = false){
     $sort = $desc == false ? SORT_ASC : SORT_DESC;
     array_multisort($fieldArr, $sort, $array);
 }
-//获取13位时间戳
-function getMillisecond() {
-    list($t1, $t2) = explode(' ', microtime());
-    return (float)sprintf('%.0f',(floatval($t1)+floatval($t2))*1000);
-}
+
 /**
  * @desc 秒转换为分秒
  */
@@ -217,6 +189,7 @@ function secToMinSec($secs){
         }
     }
 }
+
 function changeTimeType($seconds){
     if ($seconds > 3600){
         $hours = intval($seconds/3600);
@@ -227,6 +200,7 @@ function changeTimeType($seconds){
     }
     return $time;
 }
+
 function viewTimes($strtime){
     $now = time();
     $diff_time =  $now-$strtime;
@@ -243,6 +217,21 @@ function viewTimes($strtime){
     }
     return $view_time;
 }
+
+function getprovinceByip($ip){
+    $url = "http://api.map.baidu.com/location/ip?ak=q1pQnjOG28z8xsCaoby2oqLTLaPgelyq&coor=bd09ll&ip=".$ip;
+    $result = file_get_contents($url);
+    $re = json_decode($result,true);
+
+    if($re && $re['status'] == 0){
+        $province_name = $re['content']['address_detail']['province'];
+
+    }else{
+        $province_name = '北京市';
+    }
+    return $province_name;
+}
+
 function getgeoByloa($lat,$lon){
     $ak = C('BAIDU_GEO_KEY');
     $url = 'http://api.map.baidu.com/geocoder/v2/?location='.$lat.','.$lon.'&output=json&pois=0&ak='.$ak;
