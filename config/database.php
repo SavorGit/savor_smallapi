@@ -1,9 +1,9 @@
 <?php
-$db_master_host = 'localhost';
-$db_slave_host  = 'localhost';
+$db_master_host = '192.168.168.116';
+$db_slave_host  = '192.168.168.116';
 $db_name = 'cloud';
-$db_user = 'root';
-$db_pwd = '';
+$db_user = 'phpweb';
+$db_pwd = '123456';
 return [
     // 数据库类型
     'type'            => 'mysql',
