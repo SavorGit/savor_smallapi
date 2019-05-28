@@ -67,7 +67,7 @@ class RecordLog {
         return true;
     }
 
-    public static function add_client_api_log($url,$method,$traceinfo = array(),$param = array(), $resp_result,$start_time,$end_time){
+    public static function add_client_api_log($url,$method,$headerinfo = array(),$param = array(), $resp_result,$start_time,$end_time){
     	$content = '';
     	$calc_time = $end_time - $start_time;
         $data = array();
@@ -76,7 +76,7 @@ class RecordLog {
     	$data['total_time']  = round($calc_time, 4);
     	$data['url']         = $url;
     	$data['method']      = $method;
-    	$data['traceinfo']   =  '';
+    	$data['header']      = json_encode($headerinfo);
     	$data['params']      = json_encode($param);
     	$data['resp_result'] = $resp_result;
     	$data['client_ip']   = get_client_ipaddr();

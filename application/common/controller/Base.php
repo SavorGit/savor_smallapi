@@ -9,6 +9,7 @@ class Base extends Controller{
     protected $method = '';//请求方式 GET POST
     protected $params = array();
     protected $valid_fields = array(); //数据有效性验证(必参)
+    protected $headerinfo = array();
     protected $start_time = '';
     protected $end_time = '';
 
@@ -46,6 +47,8 @@ class Base extends Controller{
             $this->params = array_merge($input_params,$_GET,$_POST);
         }
 
+        $this->header_file();
+
         if($this->is_verify){
             if(empty($this->params)){
                 $this->to_back(1001);
@@ -77,7 +80,8 @@ class Base extends Controller{
             $sign = $params['sign'];
             $compare = gen_params_sign($params);
             if (empty($sign) || $compare['sign'] != $sign) {
-                if(APP_DEBUG){
+                $app_debug = env('app_debug');
+                if($app_debug){
                     $this->to_back($compare);
                 }else{
                     $this->to_back(1007);
@@ -96,6 +100,26 @@ class Base extends Controller{
         return true;
     }
 
+
+    private function header_file(){
+        if(isset($_SERVER['traceinfo'])){
+            $traceinfo = $_SERVER['traceinfo'];//versionname=;versioncode=;macaddress=;buildversion=;systemtimezone=
+            $traceinfo_arr = explode(';', $traceinfo);
+            foreach ($traceinfo_arr as $v){
+                $info = explode('=', $v);
+                $this->headerinfo[$info[0]] = $info[1];
+            }
+        }
+        if($this->is_verify){
+            if(empty($this->headerinfo)){
+                $this->to_back(1003);
+            }
+        }
+        $this->headerinfo['boxMac'] = isset($_SERVER['boxMac'])?$_SERVER['boxMac']:'';
+        $this->headerinfo['hotelId'] = isset($_SERVER['hotelId'])?$_SERVER['hotelId']:0;
+        $this->headerinfo['X-VERSION'] = isset($_SERVER['X-VERSION'])?$_SERVER['X-VERSION']:'';
+        return true;
+    }
 
     /**
      * @param  $data
@@ -125,13 +149,15 @@ class Base extends Controller{
         $this->end_time = microtime(true);
         $is_log = env('api_log');
         if($is_log){
-            \RecordLog::add_client_api_log($url,$_SERVER['REQUEST_METHOD'], array(), $this->params, $result,$this->start_time,$this->end_time);
+            \RecordLog::add_client_api_log($url,$_SERVER['REQUEST_METHOD'],$this->headerinfo, $this->params, $result,$this->start_time,$this->end_time);
         }
         if($type == 2){
             $encry = encrypt_data($result);
             header('des:true');
             echo $encry;
         }else{
+            //entity 实体, virtual 虚拟
+            header('X-SMALL-TYPE:virtual');
             echo $result;
         }
         exit;
