@@ -19,7 +19,7 @@ return [
     // 缓存前缀
     'prefix' => 'vsmall:',
     // 缓存有效期 0表示永久缓存
-    'expire' => 0,
+    'expire' => 86400,
 
     'redis_config' => $redis,
 ];

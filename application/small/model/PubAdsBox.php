@@ -10,7 +10,7 @@ class PubAdsBox extends Base
         ->leftJoin('savor_pub_ads b',  'a.pub_ads_id= b.id')
         ->leftJoin('savor_ads c ' ,'b.ads_id=c.id')
         ->leftJoin('savor_media d ','c.media_id=d.id')
-        ->field("b.id pub_ads_id,b.create_time,d.id,d.oss_addr AS name,
+        ->field("b.id pub_ads_id,b.create_time,d.id,substr(d.oss_addr,16) as name,
                  d.md5 AS md5,'easyMd5' AS md5_type,c.name AS chinese_name,
     			 'ads' AS `type`,
 				 d.oss_addr AS oss_path,
