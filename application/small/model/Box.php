@@ -1,19 +1,10 @@
 <?php
 namespace app\small\model;
 
-use think\Model;
-
-class Box extends Model
+class Box extends Base
 {
     protected $table = 'savor_box';
 
-    public function getBoxlist($where){
-        return $this->where($where)->limit(0,10)->select();
-    }
-    public function getOne($fields,$where){
-        $data = $this->field($fields)->where($where)->find()->toArray();
-        return $data;
-    }
     public function getHotelBoxInfo($fields,$where,$type = 1){
         if($type==1){
             $data = $this->alias('a')
@@ -35,6 +26,5 @@ class Box extends Model
                          ->toArray();
         }
         return $data;
-        
     }
 }
