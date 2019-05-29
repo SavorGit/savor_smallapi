@@ -130,6 +130,10 @@ return [
     'api_expire_time'=>86400,//接口有效期暂时默认为1天,配置时间越短接口防刷越安全
     'param_key' => 're&-d@ian<&19^0n#!>',//解密接口数据key
     'sign_key'  => 'rd2019#@ros%do0c6$<^)#%^(2o28',//签名key
+
     'room_type_arr'=>array('1'=>'包间','2'=>'大厅','3'=>'等候区'),
+    'version_types'=>array('ads'=>'广告期号','adv'=>'宣传片占位符期号','pro'=>'节目期号', 'vod'=>'点播期号',
+        'logo'=>'Logo 图版本号','load'=>'Loading 图版本号','apk'=>'APK 版本号',),
+
 
 ];
