@@ -130,5 +130,6 @@ return [
     'api_expire_time'=>86400,//接口有效期暂时默认为1天,配置时间越短接口防刷越安全
     'param_key' => 're&-d@ian<&19^0n#!>',//解密接口数据key
     'sign_key'  => 'rd2019#@ros%do0c6$<^)#%^(2o28',//签名key
+    'room_type_arr'=>array('1'=>'包间','2'=>'大厅','3'=>'等候区'),
 
 ];
