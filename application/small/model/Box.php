@@ -13,8 +13,7 @@ class Box extends Base
                          ->leftJoin('savor_hotel_ext ext','ext.hotel_id=hotel.id')
                          ->field($fields)
                          ->where($where)
-                         ->find()
-                         ->toArray();
+                         ->find();
         }else {
            $data = $this->alias('a')
                          ->leftJoin('savor_room room','a.room_id=room.id')
@@ -22,8 +21,7 @@ class Box extends Base
                          ->leftJoin('savor_hotel_ext ext','ext.hotel_id=hotel.id')
                          ->field($fields)
                          ->where($where)
-                         ->select()
-                         ->toArray();
+                         ->select();
         }
         return $data;
     }
