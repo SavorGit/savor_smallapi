@@ -9,12 +9,18 @@ class Program extends Base{
         switch($this->action) {
             case 'getmenu':
                 $this->is_verify = 0;
+                $this->valid_fields = array('boxMac'=>1001);
+                $this->method = 'get';
+                break;
+            case 'getadv':
+                $this->is_verify = 0;
+                $this->valid_fields = array('boxMac'=>1001);
                 $this->method = 'get';
                 break;
         }
         parent::_init_();
     }
-    public function getmenu(){
+    public function getMenu(){
         $box_mac = $this->params['boxMac'];
         $m_box = new \app\small\model\Box();
         $fields = 'a.state box_state,a.flag box_flag,hotel.area_id,a.id box_id,a.mac box_mac,a.name box_name,
@@ -120,7 +126,7 @@ class Program extends Base{
             $fields="";
             $where = array();
             $orderby =' sort_num asc';
-            $pro_result = $m_program_menu_item->getMenuInfo($menu_info['menu_id']);
+            $pro_result = $m_program_menu_item->getMenuInfo($menu_info['menu_id'],2);
             
             $pro_list['version']['label'] = '节目期号';
             $pro_list['version']['type']  = 'pro';
@@ -200,6 +206,58 @@ class Program extends Base{
             $this->to_back($data);
         }
         
+        
+    }
+    /**
+     * @desc 获取机顶盒酒楼宣传片
+     */
+    public function getadv(){
+        $box_mac = $this->params['boxMac'];
+        $m_box = new \app\small\model\Box();
+        $fields = 'hotel.id hotelId,room.id room_id';
+        $where = array();
+        $where['mac'] = $box_mac;
+        $where['a.flag']= 0;
+        $where['a.state'] = 1;
+        $where['hotel.flag'] = 0;
+        $where['hotel.state']= 1;
+        $result = $m_box->getHotelBoxInfo($fields, $where);
+        
+        if(empty($result)){
+            $this->to_back(10100);
+        }
+        
+        $hotel_id = $result['hotelId'];
+        
+        //获取最新一期节目单
+        $m_new_menu_hotel = new \app\small\Model\ProgramMenuHotel();
+        
+        $menu_info = $m_new_menu_hotel->getLatestMenuid($hotel_id);   //获取最新的一期节目单
+        
+        if(empty($menu_info)){//该酒楼未设置节目单
+            $this->to_back(10101);
+        }
+        //获取酒楼宣传片
+        $m_program_menu_item = new \app\small\Model\ProgramMenuItem();
+        $adv_result = $m_program_menu_item->getadvInfo($hotel_id, $menu_info['menu_id']);
+        $adv_tmp = array();
+        foreach($adv_result as $key=>$v){
+            $adv_tmp[$key]['mac'] = $box_mac;
+            $adv_tmp[$key]['hotelId'] = $hotel_id;
+            $adv_tmp[$key]['id']      = '';
+            $adv_tmp[$key]['vid']     = intval($v['id']);
+            $adv_tmp[$key]['name']    = $v['name'];
+            $adv_tmp[$key]['chinese_name'] = $v['chinese_name'];
+            $adv_tmp[$key]['period']  = '';       //**************************                 
+            $adv_tmp[$key]['type']    = 'adv';
+            $adv_tmp[$key]['md5']     = $v['md5'];
+            $adv_tmp[$key]['duration']= $v['duration'];
+            $adv_tmp[$key]['suffix']  = $v['suffix'];
+            $adv_tmp[$key]['url']     = '';
+            $adv_tmp[$key]['oss_path']= $v['oss_path'];
+            $adv_tmp[$key]['order']   = intval($v['order']);
+            
+        }
         
     }
 }
