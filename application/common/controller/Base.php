@@ -182,7 +182,7 @@ class Base extends Controller{
         if(empty($box_info)){
             $fields = 'a.state box_state,a.flag box_flag,hotel.area_id,a.id box_id,a.mac box_mac,a.name box_name,
                    a.switch_time,a.volum,hotel.id hotel_id,hotel.name hotel_name,hotel.addr address,hotel.contractor linkman,
-                   hotel.tel,ext.server_location server,ext.mac_addr mac,hotel.level,hotel.iskey key_point,
+                   hotel.tel,ext.server_location server,ext.mac_addr mac,hotel.level,hotel.iskey key_point,a.tpmedia_id,
                    hotel.install_date,hotel.state hotel_state,hotel.state_change_reason state_reason,hotel.remark,hotel.create_time,
                    hotel.update_time,hotel.flag hotel_flag,hotel.hotel_box_type,
                    room.id room_id,room.name room_name,room.type room_type,room.probe,room.flag room_flag,room.state room_state';
@@ -222,6 +222,7 @@ class Base extends Controller{
             $result['mac']       = $hotel_ext_info['mac_addr'];
             $result['level']     = $hotel_info['level'];
             $result['key_point'] = $hotel_info['iskey'];
+            $result['tpmedia_id']= $box_info['tpmedia_id'];
             $result['install_date']= $hotel_info['install_date'];
             $result['hotel_state']=$hotel_info['state'];
             $result['state_reason']= $hotel_info['state_change_reason'];
