@@ -55,7 +55,7 @@ class Base extends Controller{
             if(empty($this->params)){
                 $this->to_back(1001);
             }else{
-                $this->check_sign($this->params);
+                //$this->check_sign($this->params);
                 if(!empty($this->valid_fields)){
                     foreach ($this->valid_fields as $key=>$value){
                         $tv = trim($this->params[$key]);
