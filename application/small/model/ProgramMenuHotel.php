@@ -1,8 +1,6 @@
 <?php
 namespace app\small\model;
 
-use think\Model;
-
 class ProgramMenuHotel extends Base
 {
     protected $table = 'savor_programmenu_hotel';
