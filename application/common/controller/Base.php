@@ -12,9 +12,11 @@ class Base extends Controller{
     protected $headerinfo = array();
     protected $start_time = '';
     protected $end_time = '';
+    protected $expire ;
 
     public function __construct(){
         parent::__construct();
+        $this->expire = config('cache.expire');
         $this->action = Request::action();
         $this->_init_();
     }
