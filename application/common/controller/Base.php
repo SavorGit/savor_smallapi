@@ -104,8 +104,8 @@ class Base extends Controller{
 
 
     private function header_file(){
-        if(isset($_SERVER['traceinfo'])){
-            $traceinfo = $_SERVER['traceinfo'];//versionname=;versioncode=;macaddress=;buildversion=;systemtimezone=
+        if(isset($_SERVER['HTTP_TRACEINFO'])){
+            $traceinfo = $_SERVER['HTTP_TRACEINFO'];//versionname=;versioncode=;macaddress=;buildversion=;systemtimezone=
             $traceinfo_arr = explode(';', $traceinfo);
             foreach ($traceinfo_arr as $v){
                 $info = explode('=', $v);
