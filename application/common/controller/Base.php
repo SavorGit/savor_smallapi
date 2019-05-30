@@ -117,9 +117,6 @@ class Base extends Controller{
                 $this->to_back(1003);
             }
         }
-        $this->headerinfo['boxMac'] = isset($_SERVER['boxMac'])?$_SERVER['boxMac']:'';
-        $this->headerinfo['hotelId'] = isset($_SERVER['hotelId'])?$_SERVER['hotelId']:0;
-        $this->headerinfo['X-VERSION'] = isset($_SERVER['X-VERSION'])?$_SERVER['X-VERSION']:'';
         return true;
     }
 
