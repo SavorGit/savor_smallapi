@@ -26,6 +26,7 @@ class Box extends Base{
         if(!empty($res_box)){
             $res_box['room_type'] = $room_types[$res_box['room_type']];
         }
+        $hotel_id = $res_box['hotel_id'];
         $logo_mediaid = $res_box['media_id'];
         unset($res_box['media_id']);
         $m_sysconfig = new \app\small\model\SysConfig();
@@ -47,9 +48,42 @@ class Box extends Base{
             }
         }
         $all_version_types = config('version_types');
-        $res_box['oss_bucket_name'] = 'redian-produce';
-        $res_box['playbill_version_list'] = array();//todo 广告期号、宣传片占位符期号、节目期号
-        $res_box['demand_version_list'] = array();//todo 点播期号
+        $res_box['oss_bucket_name'] = env('oss_bucket_name');
+
+        //广告期号
+        $m_pub_ads_box = new \app\small\model\PubAdsBox();
+        $ads_proid_info = $m_pub_ads_box->getBoxPorid($res_box['box_id']);
+        $ads_proid = date('YmdHis',strtotime($ads_proid_info['create_time']));
+
+        //获取最新节目期号
+        $m_new_menu_hotel = new \app\small\Model\ProgramMenuHotel();
+        $menu_info = $m_new_menu_hotel->getLatestMenuid($hotel_id);
+        $menu_id = $menu_info['menu_num'];
+
+        //宣传片期号
+        $m_ads= new \app\small\Model\Ads();
+        $adv_period_info = $m_ads->getInfo(array('hotel_id'=>$hotel_id,'type'=>3),'max(update_time) as max_update_time');
+        $adv_period = date('YmdHis',strtotime($adv_period_info['max_update_time']));
+        $adv_period = $adv_period.$menu_id;
+
+
+        //获取点播期号
+        $m_mb_period = new \app\small\model\MbPeriod();
+        $field = " period,update_time ";
+        $order = 'update_time desc';
+        $where = [];
+        $vod_period_result = $m_mb_period->getOne($field, $where,$order);
+        $demand_period = $vod_period_result['period'];
+
+
+        $res_box['playbill_version_list'] = array(
+            array('label'=>$all_version_types['ads'],'type'=>'ads','version'=>$ads_proid),
+            array('label'=>$all_version_types['adv'],'type'=>'adv','version'=>$adv_period),
+            array('label'=>$all_version_types['pro'],'type'=>'pro','version'=>$menu_id),
+        );
+
+        $demand_version_list = array('label'=>$all_version_types['vod'],'type'=>'vod','version'=>$demand_period);
+        $res_box['demand_version_list'] = array($demand_version_list);
         $logo_version_list = array('label'=>$all_version_types['logo'],'type'=>'logo','version'=>$logo_mediaid);
         $res_box['logo_version_list'] = array($logo_version_list);
         $loading_version_list = array('label'=>$all_version_types['load'],'type'=>'load','version'=>$loading_mediaid);
