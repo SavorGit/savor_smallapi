@@ -9,6 +9,7 @@ Route::get('small/api/download/adv/config','small/Program/getadv');
 Route::get('small/api/download/ads/config','small/Program/getads');
 Route::get('small/api/download/poly/config','small/Program/getpoly');
 Route::get('small/api/download/demand/config','small/Demand/getdemand');
+Route::get('small/api/download/apk/config','small/Upgrade/boxupgrade');
 return [
 
 ];

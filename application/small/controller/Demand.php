@@ -18,20 +18,8 @@ class Demand extends Base{
     public function getdemand(){
         $box_mac = $this->params['boxMac'];
         
-        $m_box = new \app\small\model\Box();
-        $fields = 'a.state box_state,a.flag box_flag,hotel.area_id,a.id box_id,a.mac box_mac,a.name box_name,
-                   a.switch_time,a.volum,hotel.id hotel_id,hotel.name hotel_name,hotel.addr address,hotel.contractor linkman,
-                   hotel.tel,ext.server_location server,ext.mac_addr mac,hotel.level,hotel.iskey key_point,
-                   hotel.install_date,hotel.state hotel_state,hotel.state_change_reason state_reason,hotel.remark,hotel.create_time,
-                   hotel.update_time,hotel.flag hotel_flag,hotel.hotel_box_type,
-                   room.id room_id,room.name room_name,room.type room_type,room.probe,room.flag room_flag,room.state room_state';
-        $where = array();
-        $where['a.mac'] = $box_mac;
-        $where['a.flag']= 0;
-        $where['a.state'] = 1;
-        $where['hotel.flag'] = 0;
-        $where['hotel.state']= 1;
-        $result = $m_box->getHotelBoxInfo($fields, $where);
+        $m_hotel = new \app\small\model\Hotel();
+        $result = $m_hotel->getHotelInfo($box_mac);
         
         if(empty($result)){
             $this->to_back(10100);

@@ -4,20 +4,25 @@ namespace app\small\controller;
 use app\common\controller\Base;
 
 class Program extends Base{
-
     function _init_() {
+        
         switch($this->action) {
-            case 'getmenu':
+            case 'getmenu'://主节目单
                 $this->is_verify = 0;
                 $this->valid_fields = array('boxMac'=>1001);
                 $this->method = 'get';
                 break;
-            case 'getadv':
+            case 'getadv'://宣传片
                 $this->is_verify = 0;
                 $this->valid_fields = array('boxMac'=>1001);
                 $this->method = 'get';
                 break;
-            case 'getads':
+            case 'getads'://广告
+                $this->is_verify = 0;
+                $this->valid_fields = array('boxMac'=>1001);
+                $this->method = 'get';
+                break;
+            case 'getpoly'://聚屏广告
                 $this->is_verify = 0;
                 $this->valid_fields = array('boxMac'=>1001);
                 $this->method = 'get';
@@ -27,48 +32,31 @@ class Program extends Base{
     }
     public function getMenu(){
         $box_mac = $this->params['boxMac'];
-        $m_box = new \app\small\model\Box();
-        $fields = 'a.state box_state,a.flag box_flag,hotel.area_id,a.id box_id,a.mac box_mac,a.name box_name,
-                   a.switch_time,a.volum,hotel.id hotel_id,hotel.name hotel_name,hotel.addr address,hotel.contractor linkman,
-                   hotel.tel,ext.server_location server,ext.mac_addr mac,hotel.level,hotel.iskey key_point,
-                   hotel.install_date,hotel.state hotel_state,hotel.state_change_reason state_reason,hotel.remark,hotel.create_time,
-                   hotel.update_time,hotel.flag hotel_flag,hotel.hotel_box_type,
-                   room.id room_id,room.name room_name,room.type room_type,room.probe,room.flag room_flag,room.state room_state';
-        $where = array();
-        $where['mac'] = $box_mac;
-        $where['a.flag']= 0;
-        $where['a.state'] = 1;
-        $where['hotel.flag'] = 0;
-        $where['hotel.state']= 1;
-        $result = $m_box->getHotelBoxInfo($fields, $where);
+        $m_hotel = new \app\small\model\Hotel();
+        $result = $m_hotel->getHotelInfo($box_mac);
         
-        if(empty($result)){
-            $this->to_back(10100);
+        
+        //获取系统设置电视设置
+        $m_sys_config = new \app\small\model\SysConfig();
+        $sys_info = $m_sys_config->getAllconfig();
+        
+        $system_ad_volume   = $sys_info['system_ad_volume'];
+        $system_switch_time = !empty($sys_info['system_switch_time']) ?$sys_info['system_switch_time']:'';
+        
+        if(is_numeric($system_ad_volume) && $system_ad_volume>=0){
+            $system_ad_volume = intval($system_ad_volume);
+        }
+        if(is_numeric($system_switch_time) && $system_switch_time>=0){
+            $system_switch_time = intval($system_switch_time);
         }
         
-        $redis  = \SavorRedis::getInstance();
+        $redis = \SavorRedis::getInstance();
         $redis->select(10);
-        $cache_key = config('cache.prefix').'program:'.$box_mac;
+        $cache_key = config('cache.prefix').'pro:'.$result['hotel_id'].":".$box_mac;
         $reids_result = $redis->get($cache_key);
         if(empty($reids_result)){
-            //获取系统设置电视设置
-            $m_sys_config = new \app\small\model\SysConfig();
-            $fields = 'config_key,config_value';
-            $where = array();
-            $where['config_key'] = array('system_switch_time','system_ad_volume');
-            $where['status'] = 1;
-            $sys_info = $m_sys_config->getSysInfo($fields, $where);
-            $system_ad_volume = $system_switch_time = '';
             
-            foreach($sys_info as $key=>$v){
-                if($v['config_key']=='system_ad_volume' && is_numeric($v['config_value']) && $v['config_value']>=0){
-                    $system_ad_volume = intval($v['config_value']);
-                }
-                if($v['config_key']=='system_switch_time' && is_numeric($v['config_value']) && $v['config_value']>=0 ){
-                    $system_switch_time = intval($v['config_value']);
-                }
             
-            }
             $data = array();
             $data['state']   = intval($result['box_state']);
             $data['flag']    = intval($result['box_flag']);
@@ -114,7 +102,7 @@ class Program extends Base{
             $data['box_name'] = $result['box_name'];
             //节目单节点
             //获取最新一期节目单
-            $m_new_menu_hotel = new \app\small\Model\ProgramMenuHotel();
+            $m_new_menu_hotel = new \app\small\model\ProgramMenuHotel();
             $hotel_id = $result['hotel_id'];
             $menu_info = $m_new_menu_hotel->getLatestMenuid($hotel_id);   //获取最新的一期节目单
             //print_r($menu_info);exit;
@@ -126,12 +114,12 @@ class Program extends Base{
             $ads_list['version']['type']   = 'ads';
             $ads_list['version']['version']= $menu_info['menu_num'];
             
-            $m_program_menu_item = new \app\small\Model\ProgramMenuItem();
+            $m_program_menu_item = new \app\small\model\ProgramMenuItem();
             
             $fields="";
             $where = array();
             $orderby =' sort_num asc';
-            $pro_result = $m_program_menu_item->getMenuInfo($menu_info['menu_id'],2);
+            $pro_result = $m_program_menu_item->getMenuInfo($menu_info['menu_id']);
             
             $pro_list['version']['label'] = '节目期号';
             $pro_list['version']['type']  = 'pro';
@@ -203,8 +191,7 @@ class Program extends Base{
             $poly_list['media_lib'] = $poly_tmp;
             $data['playbill_list'] = array($pro_list,$adv_list,$ads_list,$rtb_list,$poly_list);
             $data['pub_time'] = $menu_info['pub_time'];
-            
-            $redis->set($cache_key, json_encode($data),86400);
+            $redis->set($cache_key, json_encode($data),$this->expire);
             $this->to_back($data);
         }else {
             $data = json_decode($reids_result,true);
@@ -218,24 +205,17 @@ class Program extends Base{
      */
     public function getadv(){
         $box_mac = $this->params['boxMac'];
-        $m_box = new \app\small\model\Box();
-        $fields = 'hotel.id hotelId,room.id room_id';
-        $where = array();
-        $where['mac'] = $box_mac;
-        $where['a.flag']= 0;
-        $where['a.state'] = 1;
-        $where['hotel.flag'] = 0;
-        $where['hotel.state']= 1;
-        $result = $m_box->getHotelBoxInfo($fields, $where);
+        $m_hotel = new \app\small\model\Hotel();
+        $result = $m_hotel->getHotelInfo($box_mac);
         
         if(empty($result)){
             $this->to_back(10100);
         }
         
-        $hotel_id = $result['hotelId'];
+        $hotel_id = $result['hotel_id'];
         
         //获取最新一期节目单
-        $m_new_menu_hotel = new \app\small\Model\ProgramMenuHotel();
+        $m_new_menu_hotel = new \app\small\model\ProgramMenuHotel();
         
         $menu_info = $m_new_menu_hotel->getLatestMenuid($hotel_id);   //获取最新的一期节目单
         
@@ -244,16 +224,16 @@ class Program extends Base{
         }
         $redis  = \SavorRedis::getInstance();
         $redis->select(10);
-        $cache_key = config('cache.prefix').'adv:'.$box_mac;
+        $cache_key = config('cache.prefix').'adv:'.$hotel_id.":".$box_mac;
         $redis_result = $redis->get($cache_key);
         if(empty($redis_result)){
             //获取宣传片期号
-            $m_ads= new \app\small\Model\Ads();
+            $m_ads= new \app\small\model\Ads();
             $adv_period_info = $m_ads->getInfo(array('hotel_id'=>$hotel_id,'type'=>3),'max(update_time) as max_update_time');
             $adv_period = date('YmdHis',strtotime($adv_period_info['max_update_time']));
             
             //获取酒楼宣传片
-            $m_program_menu_item = new \app\small\Model\ProgramMenuItem();
+            $m_program_menu_item = new \app\small\model\ProgramMenuItem();
             $adv_result = $m_program_menu_item->getadvInfo($hotel_id, $menu_info['menu_id']);
             if(empty($adv_result)){
                 $this->to_back(10102);
@@ -287,7 +267,7 @@ class Program extends Base{
             $data = $adv_list;
             $data['media_lib'] = $adv_tmp;
             $data['menu_num']  = $menu_info['menu_num'];
-            $redis->set($cache_key, json_encode($data),86400);
+            $redis->set($cache_key, json_encode($data),$this->expire);
             $this->to_back($data);
         }else {
             $data = json_decode($redis_result,true);
@@ -301,30 +281,137 @@ class Program extends Base{
      */
     public function getads(){
         $box_mac = $this->params['boxMac'];
-        $m_box = new \app\small\model\Box();
-        $fields = 'hotel.id hotelId,room.id room_id,a.id box_id';
-        $where = array();
-        $where['mac'] = $box_mac;
-        $where['a.flag']= 0;
-        $where['a.state'] = 1;
-        $where['hotel.flag'] = 0;
-        $where['hotel.state']= 1;
-        $result = $m_box->getHotelBoxInfo($fields, $where);
+        $m_hotel = new \app\small\model\Hotel();
+        $result = $m_hotel->getHotelInfo($box_mac);
         
         if(empty($result)){
             $this->to_back(10100);
         }
+        $redis = \SavorRedis::getInstance();
+        $redis->select(10);
+        $cache_key = config('cache.prefix').'ads:'.$result['hotel_id'].":".$box_mac;
+        $redis_result = $redis->get($cache_key);
         
-        $hotel_id = $result['hotelId'];
-        $box_id   = $result['box_id'];
-        $m_pub_ads_box = new \app\small\Model\PubAdsBox();
-        $ads_result = $m_pub_ads_box->getAdsList($box_id);
-        if(empty($ads_result)){
-            $this->to_back(10103);
+        if(empty($redis_result)){
+            $hotel_id = $result['hotel_id'];
+            $box_id   = $result['box_id'];
+            $m_pub_ads_box = new \app\small\model\PubAdsBox();
+            $ads_result = $m_pub_ads_box->getAdsList($box_id);
+            if(empty($ads_result)){
+                $this->to_back(10103);
+            }
+            $ads_period_info = $m_pub_ads_box->getBoxPorid($box_id);
+            $ads_period = date('YmdHis',strtotime($ads_period_info['create_time']));
+            
+            $ads_tmp = array();
+            foreach($ads_result as $key=>$v){
+                $ads_tmp[$key]['mac'] = $box_mac;
+                $ads_tmp[$key]['hotelId'] = intval($hotel_id);
+                $ads_tmp[$key]['id']      = '';
+                $ads_tmp[$key]['vid']     = intval($v['id']);
+                $ads_tmp[$key]['name']    = $v['name'];
+                $ads_tmp[$key]['chinese_name'] = $v['chinese_name'];
+                $ads_tmp[$key]['period']  = $ads_period;
+                $ads_tmp[$key]['type']    = 'ads';
+                $ads_tmp[$key]['md5']     = $v['md5'];
+                $ads_tmp[$key]['duration']= intval($v['duration']);
+                $ads_tmp[$key]['suffix']  = $v['suffix'];
+                $ads_tmp[$key]['url']     = '';
+                $ads_tmp[$key]['oss_path']= $v['oss_path'];
+                $ads_tmp[$key]['order']   = 0;
+                $ads_tmp[$key]['pub_time']= $v['create_time'];
+                $ads_tmp[$key]['room_id'] = $result['room_id'];
+                $ads_tmp[$key]['start_date'] = $v['start_date'];
+                $ads_tmp[$key]['end_date']= $v['end_date'];
+                $ads_tmp[$key]['location_id'] = intval($v['location_id']);
+                $ads_tmp[$key]['media_type'] = $v['media_type'];
+                $ads_tmp[$key]['is_sapp_qrcode'] = $v['is_sapp_qrcode'];
+            }
+            $ads_list['version']['label'] = '广告期号';
+            $ads_list['version']['type']  = 'ads';
+            $ads_list['version']['version'] = $ads_period;
+            $data = $ads_list;
+            $data['media_lib'] = $ads_tmp;
+            $data['menu_num'] = $ads_period;
+            $redis->set($cache_key, json_encode($data),$this->expire);
+            $this->to_back($data);
+        }else {
+            $data = json_decode($redis_result,true);
+            $this->to_back($data);
         }
-        $ads_proid_info = $m_pub_ads_box->getBoxPorid($box_id);
-        $ads_proid = date('YmdHis',strtotime($ads_proid_info['create_time']));
+    }
+    /**
+     * @desc 获取聚屏广告
+     * 
+     */
+    public function getpoly(){
+        $box_mac = $this->params['boxMac'];
+        $m_hotel = new \app\small\model\Hotel();
+        $result = $m_hotel->getHotelInfo($box_mac);
         
-        
+        if(empty($result)){
+            $this->to_back(10100);
+        }
+        if(!empty($result['tpmedia_id'])){
+            
+            $redis = \SavorRedis::getInstance();
+            $redis->select(10);
+            $cache_key = config('cache.prefix').'poly:'.$result['hotel_id'].":".$box_mac; 
+            $redis_result = $redis->get($cache_key);
+            if(empty($redis_result)){
+                $m_pub_poly_ads = new \app\small\model\PubPolyAds();
+                $fields = "a.update_time,media.id,substr(media.oss_addr,16) as name,media.md5,media.type as mtype,
+                       a.media_md5  tp_md5,a.type as media_type,
+                      'poly' as type,media.oss_addr oss_path,media.duration,media.surfix,
+                       media.name chinese_name,a.tpmedia_id,ads.is_sapp_qrcode";
+                $where = array();
+                $where['a.state'] = 1;
+                $where['a.flag'] =0;
+                $where['a.tpmedia_id'] = array('in',$result['tpmedia_id']);
+                
+                $order = 'a.update_time desc ';
+                $poly_result = $m_pub_poly_ads->getList($fields, $where,$order);
+                if(!empty($poly_result)){
+                    $list = $poly_result->toArray();
+                    $update_time_arr = array_column($list,'update_time');
+                    $poly_period = date('YmdHis',strtotime(max($update_time_arr)));
+                    $poly_tmp = array();
+                    foreach($poly_result as $key=>$v){
+                        $poly_tmp[$key]['mac'] = $box_mac;
+                        $poly_tmp[$key]['hotelId'] = intval($result['hotel_id']);
+                        $poly_tmp[$key]['id']  = '';
+                        $poly_tmp[$key]['vid'] = intval($v['id']);
+                        $poly_tmp[$key]['name']= $v['name'];
+                        $poly_tmp[$key]['chinese_name'] = $v['chinese_name'];
+                        $poly_tmp[$key]['period'] = $poly_period;
+                        $poly_tmp[$key]['type']= 'poly';
+                        $poly_tmp[$key]['md5'] = $v['md5'];
+                        $poly_tmp[$key]['duration'] = intval($v['duration']);
+                        $poly_tmp[$key]['url'] = '';
+                        $poly_tmp[$key]['oss_path'] = $v['oss_path'];
+                        $poly_tmp[$key]['order'] = 0;
+                        $poly_tmp[$key]['pub_time'] = $v['update_time'];
+                        $poly_tmp[$key]['media_type'] = $v['media_type'];
+                        $poly_tmp[$key]['tpmedia_id'] = $v['tpmedia_id'];
+                        $poly_tmp[$key]['tp_md5']     = $v['tp_md5'];
+                        $poly_tmp[$key]['is_sapp_qrcode'] = intval($v['is_sapp_qrcode']);
+                    }
+                    $data['version']['label'] = '聚屏广告期号';
+                    $data['version']['type']  = 'poly';
+                    $data['version']['version']= $poly_period;
+                    $data['media_lib'] = $poly_tmp;
+                    $data['menu_num'] = $poly_period;
+                    $redis->set($cache_key, json_encode($data),$this->expire);
+                    $this->to_back($data);
+                }else {
+                    $this->to_back(10105);
+                }
+            }else { 
+                $data = json_decode($redis_result,true);
+                $this->to_back($data);
+            }
+        }else {
+            $this->to_back(10104);   
+        }
     }
 }
