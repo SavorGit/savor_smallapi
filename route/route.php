@@ -1,9 +1,8 @@
 <?php
-Route::get('think', function () {
-    return 'hello,ThinkPHP5!';
-});
-
-Route::get('hello/:name', 'index/hello');
+Route::get('small/api/download/init','small/box/initdata');
+Route::get('small/tvList/api/stb/tv_getCommands','small/tvchannel/getchannellist');
+Route::get('small/tvListNew/api/stb/tv_getCommands','small/tvchannel/getchannellist');
+Route::get('small/tvList/api/stb/tv_commands','small/tvchannel/reportdata');
 Route::get('small/api/download/vod/config/v2','small/Program/getmenu');
 Route::get('small/api/download/adv/config','small/Program/getadv');
 Route::get('small/api/download/ads/config','small/Program/getads');
