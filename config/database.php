@@ -26,7 +26,7 @@ return [
     // 数据库表前缀
     'prefix'          => 'savor_',
     // 数据库调试模式
-    'debug'           => true,
+    'debug'           => false,
     // 数据库部署方式:0 集中式(单一服务器),1 分布式(主从服务器)
     'deploy'          => 1,
     // 数据库读写是否分离 主从式有效
@@ -38,7 +38,7 @@ return [
     // 自动读取主库数据
     'read_master'     => false,
     // 是否严格检查字段是否存在
-    'fields_strict'   => true,
+    'fields_strict'   => false,
     // 数据集返回类型
     'resultset_type'  => 'array',
     // 自动写入时间戳字段
