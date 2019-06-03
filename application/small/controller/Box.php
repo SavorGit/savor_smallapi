@@ -17,11 +17,12 @@ class Box extends Base{
 
     public function initdata(){
         $box_mac = $this->params['boxMac'];
-        $m_box = new \app\small\model\Box();
-        $fields = "a.switch_time,a.volum as volume,hotel.id as hotel_id,room.id as room_id,hotel.name as hotel_name,
-        room.name as room_name,a.id as box_id,a.name as box_name,hotel.area_id,hotel.media_id,room.type as room_type";
-        $where = array('a.mac'=>$box_mac);
-        $res_box = $m_box->getHotelBoxInfo($fields,$where);
+        $m_hotel = new \app\small\model\Hotel();
+        $res_hotelbox = $m_hotel->getHotelInfo($box_mac);
+        $res_box = array('switch_time'=>$res_hotelbox['switch_time'],'volume'=>$res_hotelbox['volum'],'hotel_id'=>$res_hotelbox['hotel_id'],
+            'room_id'=>$res_hotelbox['room_id'],'hotel_name'=>$res_hotelbox['hotel_name'],'room_name'=>$res_hotelbox['room_name'],
+            'box_id'=>$res_hotelbox['box_id'],'box_name'=>$res_hotelbox['box_name'],'area_id'=>$res_hotelbox['area_id'],
+            'media_id'=>$res_hotelbox['hotel_media_id'],'room_type'=>$res_hotelbox['room_type'],);
         $room_types = config('room_type_arr');
         if(!empty($res_box)){
             $res_box['room_type'] = $room_types[$res_box['room_type']];
@@ -66,7 +67,6 @@ class Box extends Base{
         $adv_period = date('YmdHis',strtotime($adv_period_info['max_update_time']));
         $adv_period = $adv_period.$menu_id;
 
-
         //获取点播期号
         $m_mb_period = new \app\small\model\MbPeriod();
         $field = " period,update_time ";
@@ -74,7 +74,6 @@ class Box extends Base{
         $where = [];
         $vod_period_result = $m_mb_period->getOne($field, $where,$order);
         $demand_period = $vod_period_result['period'];
-
 
         $res_box['playbill_version_list'] = array(
             array('label'=>$all_version_types['ads'],'type'=>'ads','version'=>$ads_proid),
