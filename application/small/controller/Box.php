@@ -57,12 +57,12 @@ class Box extends Base{
         $ads_proid = date('YmdHis',strtotime($ads_proid_info['create_time']));
 
         //获取最新节目期号
-        $m_new_menu_hotel = new \app\small\Model\ProgramMenuHotel();
+        $m_new_menu_hotel = new \app\small\model\ProgramMenuHotel();
         $menu_info = $m_new_menu_hotel->getLatestMenuid($hotel_id);
         $menu_id = $menu_info['menu_num'];
 
         //宣传片期号
-        $m_ads= new \app\small\Model\Ads();
+        $m_ads = new \app\small\model\Ads();
         $adv_period_info = $m_ads->getInfo(array('hotel_id'=>$hotel_id,'type'=>3),'max(update_time) as max_update_time');
         $adv_period = date('YmdHis',strtotime($adv_period_info['max_update_time']));
         $adv_period = $adv_period.$menu_id;
