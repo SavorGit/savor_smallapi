@@ -21,7 +21,7 @@ class Hotel extends Base
                    a.switch_time,a.volum,hotel.id hotel_id,hotel.name hotel_name,hotel.addr address,hotel.contractor linkman,
                    hotel.tel,ext.server_location server,ext.mac_addr mac,hotel.level,hotel.iskey key_point,a.tpmedia_id,
                    hotel.install_date,hotel.state hotel_state,hotel.state_change_reason state_reason,hotel.remark,hotel.create_time,
-                   hotel.update_time,hotel.flag hotel_flag,hotel.hotel_box_type,
+                   hotel.update_time,hotel.flag hotel_flag,hotel.hotel_box_type,hotel.media_id hotel_media_id,
                    room.id room_id,room.name room_name,room.type room_type,room.probe,room.flag room_flag,room.state room_state';
             $where = array();
             $where['mac'] = $box_mac;
@@ -52,6 +52,7 @@ class Hotel extends Base
             $result['volum'] = $box_info['volum'];
             $result['hotel_id'] = $room_info['hotel_id'];
             $result['hotel_name'] = $hotel_info['name'];
+            $result['hotel_media_id'] = $hotel_info['media_id'];
             $result['address'] = $hotel_info['addr'];
             $result['linkman'] = $hotel_info['contractor'];
             $result['tel'] = $hotel_info['tel'];
