@@ -5,8 +5,6 @@ class Hotel extends Base
 {
     public function getHotelInfo($box_mac){
         $m_box = new \app\small\model\Box();
-    
-    
         $where = array();
         $where['mac']  = $box_mac;
         $where['flag'] = 0;
@@ -33,54 +31,52 @@ class Hotel extends Base
             $where['hotel.state']= 1;
             $result = $m_box->getHotelBoxInfo($fields, $where);
         }else {
-            $cache_key = 'savor_room_'.$box_info['room_id'];
+            $cache_key = 'savor_room_' . $box_info['room_id'];
             $redis_room_info = $redis->get($cache_key);
-            $room_info = json_decode($redis_room_info,true);
-            $cache_key = 'savor_hotel_'.$room_info['hotel_id'];
+            $room_info = json_decode($redis_room_info, true);
+            $cache_key = 'savor_hotel_' . $room_info['hotel_id'];
             $redis_hotel_info = $redis->get($cache_key);
-            $hotel_info = json_decode($redis_hotel_info,true);
-            $cache_key = 'savor_hotel_ext_'.$room_info['hotel_id'];
+            $hotel_info = json_decode($redis_hotel_info, true);
+            $cache_key = 'savor_hotel_ext_' . $room_info['hotel_id'];
             $redis_hotel_ext_info = $redis->get($cache_key);
-            $hotel_ext_info = json_decode($redis_hotel_ext_info,true);
-    
+            $hotel_ext_info = json_decode($redis_hotel_ext_info, true);
+
             $result['box_state'] = $box_info['state'];
-            $result['box_flag']  = $box_info['flag'];
-            $result['area_id']   = $hotel_info['area_id'];
-    
-            $result['box_id']    = $box_result['box_id'];
-            $result['box_mac']   = $box_mac;
-            $result['box_name']  = $box_info['name'];
-            $result['switch_time']= $box_info['switch_time'];
-            $result['volum']     = $box_info['volum'];
-            $result['hotel_id']  = $room_info['hotel_id'];
-            $result['hotel_name']= $hotel_info['name'];
-            $result['address']   = $hotel_info['addr'];
-            $result['linkman']   = $hotel_info['contractor'];
-            $result['tel']       = $hotel_info['tel'];
-            $result['server']    = $hotel_ext_info['server_location'];
-            $result['mac']       = $hotel_ext_info['mac_addr'];
-            $result['level']     = $hotel_info['level'];
+            $result['box_flag'] = $box_info['flag'];
+            $result['area_id'] = $hotel_info['area_id'];
+
+            $result['box_id'] = $box_result['box_id'];
+            $result['box_mac'] = $box_mac;
+            $result['box_name'] = $box_info['name'];
+            $result['switch_time'] = $box_info['switch_time'];
+            $result['volum'] = $box_info['volum'];
+            $result['hotel_id'] = $room_info['hotel_id'];
+            $result['hotel_name'] = $hotel_info['name'];
+            $result['address'] = $hotel_info['addr'];
+            $result['linkman'] = $hotel_info['contractor'];
+            $result['tel'] = $hotel_info['tel'];
+            $result['server'] = $hotel_ext_info['server_location'];
+            $result['mac'] = $hotel_ext_info['mac_addr'];
+            $result['level'] = $hotel_info['level'];
             $result['key_point'] = $hotel_info['iskey'];
-            $result['tpmedia_id']= $box_info['tpmedia_id'];
-            $result['install_date']= $hotel_info['install_date'];
-            $result['hotel_state']=$hotel_info['state'];
-            $result['state_reason']= $hotel_info['state_change_reason'];
-            $result['remark']    = $hotel_info['remark'];
-            $result['create_time']= $hotel_info['create_time'];
-            $result['update_time']= $hotel_info['update_time'];
+            $result['tpmedia_id'] = $box_info['tpmedia_id'];
+            $result['install_date'] = $hotel_info['install_date'];
+            $result['hotel_state'] = $hotel_info['state'];
+            $result['state_reason'] = $hotel_info['state_change_reason'];
+            $result['remark'] = $hotel_info['remark'];
+            $result['create_time'] = $hotel_info['create_time'];
+            $result['update_time'] = $hotel_info['update_time'];
             $result['hotel_flag'] = $hotel_info['flag'];
             $result['hotel_box_type'] = $hotel_info['hotel_box_type'];
-            $result['room_id']    = $box_info['room_id'];
-            $result['room_name']  = $room_info['name'];
-            $result['room_type']  = $room_info['type'];
-            $result['probe']      = $room_info['probe'];
-            $result['room_flag']  = $room_info['flag'];
+            $result['room_id'] = $box_info['room_id'];
+            $result['room_name'] = $room_info['name'];
+            $result['room_type'] = $room_info['type'];
+            $result['probe'] = $room_info['probe'];
+            $result['room_flag'] = $room_info['flag'];
             $result['room_state'] = $room_info['state'];
-    
         }
-    
         if(empty($result)){
-            $this->to_back(10100);
+            return array('code'=>10100);
         }
         return $result;
     } 
