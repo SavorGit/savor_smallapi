@@ -1,9 +1,9 @@
 <?php
-$db_master_host = '192.168.168.116';
-$db_slave_host  = '192.168.168.116';
-$db_name = 'cloud';
-$db_user = 'phpweb';
-$db_pwd = '123456';
+$db_master_host = Env::get('db_master_host');
+$db_slave_host  = Env::get('db_slave_host');
+$db_name = Env::get('db_name');
+$db_user = Env::get('db_user');
+$db_pwd = Env::get('db_pwd');
 return [
     // 数据库类型
     'type'            => 'mysql',

@@ -3,13 +3,13 @@
 
 //redis缓存配置
 $redis = array();
-$redis['db1']['0']['host'] = '192.168.168.116';
-$redis['db1']['0']['port'] = '6380';
-$redis['db1']['0']['password'] = '!1QAZ@2WSX';
+$redis['db1']['0']['host'] = Env::get('redis_master_host');
+$redis['db1']['0']['port'] = Env::get('redis_port');
+$redis['db1']['0']['password'] = Env::get('redis_password');
 $redis['db1']['0']['isMaster'] = '1';
-$redis['db1']['1']['host'] = '192.168.168.116';
-$redis['db1']['1']['port'] = '6380';
-$redis['db1']['1']['password'] = '!1QAZ@2WSX';
+$redis['db1']['1']['host'] = Env::get('redis_slave_host');
+$redis['db1']['1']['port'] = Env::get('redis_port');
+$redis['db1']['1']['password'] = Env::get('redis_password');
 $redis['db1']['1']['isMaster'] = '0';
 return [
     // 驱动方式
