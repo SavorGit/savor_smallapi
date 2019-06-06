@@ -128,7 +128,7 @@ class Program extends Base{
             foreach($pro_result as $key=>$v){
                 $pro_tmp[$key]['mac'] = $result['box_mac'];
                 $pro_tmp[$key]['hotelId'] = intval($result['hotel_id']);
-                $pro_tmp[$key]['id']      = '';
+                $pro_tmp[$key]['id']      = 0;
                 $pro_tmp[$key]['vid']     = intval($v['id']);
                 $pro_tmp[$key]['name']    = $v['name'];
                 $pro_tmp[$key]['chinese_name'] = $v['chinese_name'];
@@ -243,7 +243,7 @@ class Program extends Base{
             foreach($adv_result as $key=>$v){
                 $adv_tmp[$key]['mac'] = $box_mac;
                 $adv_tmp[$key]['hotelId'] = $hotel_id;
-                $adv_tmp[$key]['id']      = '';
+                $adv_tmp[$key]['id']      = 0;
                 $adv_tmp[$key]['vid']     = intval($v['id']);
                 $adv_tmp[$key]['name']    = $v['name'];
                 $adv_tmp[$key]['chinese_name'] = $v['chinese_name'];
@@ -307,7 +307,7 @@ class Program extends Base{
             foreach($ads_result as $key=>$v){
                 $ads_tmp[$key]['mac'] = $box_mac;
                 $ads_tmp[$key]['hotelId'] = intval($hotel_id);
-                $ads_tmp[$key]['id']      = '';
+                $ads_tmp[$key]['id']      = 0;
                 $ads_tmp[$key]['vid']     = intval($v['id']);
                 $ads_tmp[$key]['name']    = $v['name'];
                 $ads_tmp[$key]['chinese_name'] = $v['chinese_name'];
@@ -379,7 +379,7 @@ class Program extends Base{
                     foreach($poly_result as $key=>$v){
                         $poly_tmp[$key]['mac'] = $box_mac;
                         $poly_tmp[$key]['hotelId'] = intval($result['hotel_id']);
-                        $poly_tmp[$key]['id']  = '';
+                        $poly_tmp[$key]['id']  = 0;
                         $poly_tmp[$key]['vid'] = intval($v['id']);
                         $poly_tmp[$key]['name']= $v['name'];
                         $poly_tmp[$key]['chinese_name'] = $v['chinese_name'];

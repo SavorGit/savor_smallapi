@@ -103,7 +103,7 @@ class Demand extends Base{
             foreach($vod_result as $key=>$v){
                 $vod_tmp[$key]['mac'] = $result['box_mac'];
                 $vod_tmp[$key]['hotelId'] = intval($result['hotel_id']);
-                $vod_tmp[$key]['id']      = '';
+                $vod_tmp[$key]['id']      = 0;
                 $vod_tmp[$key]['vid']     = intval($v['id']);
                 $vod_tmp[$key]['name']    = $v['name'];
                 $vod_tmp[$key]['chinese_name'] = $v['chinese_name'];
