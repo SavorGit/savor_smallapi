@@ -44,16 +44,16 @@ class Demand extends Base{
         $redis_result = $redis->get($cache_key);
         if(empty($redis_result)){
             $data = array();
-            $data['state']   = intval($result['box_state']);
+            /* $data['state']   = intval($result['box_state']);
             $data['flag']    = intval($result['box_flag']);
             $data['area_id'] = intval($result['area_id']);
             $data['box_id']  = intval($result['box_id']);
-            $data['box_mac'] = $result['box_mac'];
+            $data['box_mac'] = $result['box_mac']; */
             $data['switch_time'] = !empty($system_switch_time) ? $system_switch_time: intval($result['switch_time']);
             $data['volume']  = !empty($system_ad_volume) ? $system_ad_volume : intval($result['volum']);
             
             //酒楼节点
-            $data['boite']['hotel_id'] = intval($result['hotel_id']);
+            /* $data['boite']['hotel_id'] = intval($result['hotel_id']);
             $data['boite']['hotel_name'] = $result['hotel_name'];
             $data['boite']['address']  = $result['address'];
             $data['boite']['area_id']  = intval($data['area_id']);
@@ -86,7 +86,7 @@ class Demand extends Base{
             $data['room']['flag']      = intval($result['room_flag']);
             $data['room']['state']     = intval($result['room_state']);
             $data['room']['probe']     = $result['probe'];
-            $data['box_name'] = $result['box_name'];
+            $data['box_name'] = $result['box_name']; */
             
             
             $m_mb_period = new \app\small\model\MbPeriod();
@@ -108,7 +108,7 @@ class Demand extends Base{
                 $vod_tmp[$key]['name']    = $v['name'];
                 $vod_tmp[$key]['chinese_name'] = $v['chinese_name'];
                 $vod_tmp[$key]['period']  = $vod_period;
-                $vod_tmp[$key]['type']    = 'pro';
+                $vod_tmp[$key]['type']    = 'vod';
                 $vod_tmp[$key]['md5']     = $v['md5'];
                 $vod_tmp[$key]['duration']= intval($v['duration']);
                 $vod_tmp[$key]['suffix']  = $v['suffix'];
@@ -125,7 +125,7 @@ class Demand extends Base{
             $vod_list['version']['version'] = $vod_period;
             $vod_list['media_lib'] = $vod_tmp;
             
-            $data['playbill_list'] = $vod_list;
+            $data['playbill_list'][] = $vod_list;
             $data['pub_time']      = $pub_time;
             $redis->set($cache_key, json_encode($data),$this->expire); 
             $this->to_back($data);
