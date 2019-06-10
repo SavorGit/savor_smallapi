@@ -163,6 +163,7 @@ class Program extends Base{
             
                     $ads_tmp[] = $ads_arr;
                 }else if($v['type'] =='adv'){
+                    $ads_arr['location_id'] = $ads_arr['order'];
                     $adv_tmp[] = $ads_arr;
                 }else if($v['type'] == 'rtbads'){
                     $rtb_tmp[] = $ads_arr;
@@ -371,8 +372,9 @@ class Program extends Base{
                 
                 $order = 'a.update_time desc ';
                 $poly_result = $m_pub_poly_ads->getList($fields, $where,$order);
-                if(!empty($poly_result)){
-                    $list = $poly_result->toArray();
+                $list =  $poly_result->toArray();
+                if(!empty($list)){
+                    
                     $update_time_arr = array_column($list,'update_time');
                     $poly_period = date('YmdHis',strtotime(max($update_time_arr)));
                     $poly_tmp = array();
