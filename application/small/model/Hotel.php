@@ -76,9 +76,6 @@ class Hotel extends Base
             $result['room_flag'] = $room_info['flag'];
             $result['room_state'] = $room_info['state'];
         }
-        if(empty($result)){
-            return array('code'=>10100);
-        }
         return $result;
     } 
 }
