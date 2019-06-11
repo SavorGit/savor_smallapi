@@ -60,7 +60,7 @@ class Hotel extends Base
             $result['mac'] = $hotel_ext_info['mac_addr'];
             $result['level'] = $hotel_info['level'];
             $result['key_point'] = $hotel_info['iskey'];
-            $result['tpmedia_id'] = $box_info['tpmedia_id'];
+            $result['tpmedia_id'] = !empty($box_info['tpmedia_id']) ? $box_info['tpmedia_id'] :'';
             $result['install_date'] = $hotel_info['install_date'];
             $result['hotel_state'] = $hotel_info['state'];
             $result['state_reason'] = $hotel_info['state_change_reason'];
@@ -72,7 +72,7 @@ class Hotel extends Base
             $result['room_id'] = $box_info['room_id'];
             $result['room_name'] = $room_info['name'];
             $result['room_type'] = $room_info['type'];
-            $result['probe'] = $room_info['probe'];
+            $result['probe'] = !empty($room_info['probe']) ? $room_info['probe'] : '';
             $result['room_flag'] = $room_info['flag'];
             $result['room_state'] = $room_info['state'];
         }

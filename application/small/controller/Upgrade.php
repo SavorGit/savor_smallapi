@@ -8,7 +8,7 @@ class Upgrade extends Base{
     function _init_() {
         switch($this->action) {
             case 'boxupgrade':
-                $this->is_verify = 1;
+                $this->is_verify = 0;
                 $this->valid_fields =array('boxMac'=>1001);
                 $this->method = 'get';
                 break;
@@ -16,6 +16,7 @@ class Upgrade extends Base{
         parent::_init_();
     }
     public function boxupgrade(){
+         
         $box_mac = $this->headerinfo['boxMac'];
         $hotelid= $this->headerinfo['hotelId'];
         $versionCode = $this->headerinfo['X-VERSION'];
@@ -53,7 +54,7 @@ class Upgrade extends Base{
                     $data['isRomPromptUpgrade']= 0;
                     $data['newestApkVersion']  = $device_version_info['version_code'];
                     $data['newestRomVersion']  = '';
-                    $data['apkUrl']            = '';
+                    $data['apkUrl']            = $device_version_info['oss_addr'];
                     $data['romUrl']            = '';
                     $data['apkMd5']            = $device_version_info['md5'];
                     $data['romMd5']            = '';
