@@ -31,7 +31,7 @@ class Tvchannel extends Base{
         ext.audio_standard,ext.display_name,ext.display_number,ext.input_id,ext.is_browsable,ext.provider_data,
         ext.service_id,ext.service_type,ext.type';
         $orderby = 'a.play_number asc';
-        $where = array('hotel_id'=>$hotel_id,'type'=>$box_type);
+        $where = array('a.hotel_id'=>$hotel_id,'a.type'=>$box_type);
         $res_tvchannel = $m_tvchannel->getCustomList($fields,$where,$orderby);
         $tvChannelList = array();
         $lockingChannelNum = '';
@@ -51,7 +51,7 @@ class Tvchannel extends Base{
             }
             $tvChannelList[] = $channel_info;
         }
-        $res = array('tvChannelList'=>$tvChannelList,'lockingChannelNum'=>$lockingChannelNum);
+        $res = array('tvChannelList'=>$tvChannelList,'lockingChannelNum'=>intval($lockingChannelNum));
         $this->to_back($res);
     }
 
