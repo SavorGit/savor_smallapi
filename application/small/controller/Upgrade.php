@@ -61,16 +61,26 @@ class Upgrade extends Base{
                     $data['areaId']            = $hotel_info['area_id'];
                     $data['oss_path']          = $device_version_info['oss_addr'];
                     $redis->set($cache_key, json_encode($data),$this->expire);
-                    $this->to_back($data);
+                    if($versionCode<$data['newestApkVersion']){
+                        $this->to_back($data);
+                    }else {
+                        $this->to_back(10108);
+                    }
+                    
                 }else {
                     $this->to_back(10107);
                 }
             }else {
-                $this->to_back('10106');
+                $this->to_back(10106);
             }
         }else {
             $data = json_decode($redis_result,true);
-            $this->to_back($data);
+            if($versionCode<$data['newestApkVersion']){
+                $this->to_back($data);
+            }else {
+                $this->to_back(10108);
+            }
+            
         }
         
         
