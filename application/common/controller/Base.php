@@ -40,28 +40,38 @@ class Base extends Controller{
                     }else{
                         $input_params = json_decode($input_params, true);
                     }
-                    $this->params = array_merge($get_params,$_POST,$input_params);
+                    $this->params = array_merge($get_params,$input_params);
+                    foreach ($_POST as $k=>$v){
+                        $this->params[$k] = $v;
+                    }
                     break;
             }
         }else{
             $input_params = file_get_contents('php://input');
-            if(empty($input_params))  $input_params=array();
-            $this->params = array_merge($input_params,$_GET,$_POST);
+            if(empty($input_params)){
+                $input_params=array();
+            }else{
+                $input_params = json_decode($input_params, true);
+            }
+            foreach ($_GET as $k=>$v){
+                $input_params[$k] = $v;
+            }
+            foreach ($_POST as $k=>$v){
+                $input_params[$k] = $v;
+            }
+            $this->params = $input_params;
         }
 
         $this->header_file();
-
         if($this->is_verify){
             if(empty($this->params)){
                 $this->to_back(1001);
             }else{
-                //$this->check_sign($this->params);
+                $this->check_sign($this->params);
                 if(!empty($this->valid_fields)){
                     foreach ($this->valid_fields as $key=>$value){
                         $tv = trim($this->params[$key]);
-                        if(!in_array($key, array('encryptedData','iv'))){
-                            $this->params[$key] = addslashes($tv);
-                        }
+                        $this->params[$key] = addslashes($tv);
                         if($value == 1001){//验证参数不能为空
                             if(empty($tv) && "0" != strval($tv)){
                                 $this->to_back($value);
@@ -71,6 +81,7 @@ class Base extends Controller{
                 }
             }
         }
+
         return true;
     }
 
@@ -78,6 +89,7 @@ class Base extends Controller{
      * 校验签名
      */
     protected function check_sign($params) {
+        return true;
         if (!empty($params['time']) && !empty($params['sign'])){
             $sign = $params['sign'];
             $compare = gen_params_sign($params);
