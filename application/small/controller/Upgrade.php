@@ -20,7 +20,11 @@ class Upgrade extends Base{
         $box_mac = $this->headerinfo['boxMac'];
         $hotelid= $this->headerinfo['hotelId'];
         $versionCode = $this->headerinfo['X-VERSION'];
-        
+        $m_hotel = new \app\small\model\Hotel();
+        $result = $m_hotel->getHotelInfo($box_mac);
+        if($hotelid!=$result['hotel_id']){
+            $this->to_back(10109);
+        }
         if(empty($box_mac) || empty($hotelid) || empty($versionCode)){
             $this->to_back(1001);
         }
