@@ -58,7 +58,10 @@ class Tvchannel extends Base{
 
     public function reportdata(){
         $hotel_id = $this->headerinfo['hotelId'];
-        $data = $this->params['data'];
+        if(empty($this->params['data'])){
+            $this->to_back(1001);
+        }
+        $data = json_decode($this->params['data']);
         $m_hotel = new \app\small\model\Hotel();
         $res_hotel = $m_hotel->getInfo(array('id'=>$hotel_id),'hotel_box_type');
         $box_type = $res_hotel['hotel_box_type'];//1一代单机版,2二代网络版,3二代5G版,4二代单机版,5三代单机版,6三代网络版,
