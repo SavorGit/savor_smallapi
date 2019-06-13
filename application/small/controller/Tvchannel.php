@@ -38,15 +38,12 @@ class Tvchannel extends Base{
         $lockingChannelNum = '';
         foreach ($res_tvchannel as $v){
             if($v['is_lock']){
-                $lockingChannelNum = $v['raw_number'];
+                $lockingChannelNum = $v['play_number'];
             }
             if($box_type==2){
-                $channel_info = array('freq'=>$v['freq'],'channelName'=>$v['channel_name'],'useNum'=>$v['play_number'],'audioStandard'=>$v['audio_standard'],
-                    'videoStandard'=>$v['video_standard'],'flag'=>$v['is_lock'],'id'=>$v['id'],'chennalNum'=>$v['raw_number']);
-                $channel_info['tvChannel'] = array('freq'=>$v['freq'],'channelName'=>$v['channel_name'],'useNum'=>$v['play_number'],'audioStandard'=>$v['audio_standard'],
-                    'videoStandard'=>$v['video_standard'],'flag'=>$v['is_lock'],'id'=>$v['id'],'channelNum'=>$v['raw_number']);
+                $channel_info = array('freq'=>$v['freq'],'channelName'=>$v['channel_name'],'audioStandard'=>$v['audio_standard'],
+                    'videoStandard'=>$v['video_standard'],'chennalNum'=>$v['play_number']);
             }elseif($box_type==3){
-
                 $channel_info = array('channelName'=>$v['channel_name'],'channelNum'=>$v['raw_number'],'displayName'=>$v['display_name'],'displayNumber'=>$v['display_number'],
                     'inputId'=>$v['input_id'],'isBrowsable'=>$v['is_browsable'],'providerData'=>$v['provider_data'],'serviceId'=>$v['service_id'],'serviceType'=>$v['service_type'],
                     'type'=>$v['type'],'flag'=>$v['is_lock'],'useNum'=>$v['play_number'],'id'=>$v['id']);
@@ -91,10 +88,12 @@ class Tvchannel extends Base{
             if($box_type==2){
                 $channel_data['freq'] = $v['freq'];
                 $channel_data['raw_number']= $v['chennalNum'];
+                $channel_data['play_number']= $v['chennalNum'];
 
                 $channel_extdata = array('video_standard'=>$v['videoStandard'],'audio_standard'=>$v['audioStandard']);
             }else{
                 $channel_data['raw_number']= $v['channelNum'];
+                $channel_data['play_number']= $v['channelNum'];
                 $providerData = json_decode($v['providerData'],true);
                 $channel_data['freq'] = $providerData['fe']['freq'];
 
