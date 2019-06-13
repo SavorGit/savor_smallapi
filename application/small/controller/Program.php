@@ -368,7 +368,8 @@ class Program extends Base{
                 $where = array();
                 $where['a.state'] = 1;
                 $where['a.flag'] =0;
-                $where['a.tpmedia_id'] = array('in',$result['tpmedia_id']);
+                $tmp = explode(',', $result['tpmedia_id']);
+                $where['a.tpmedia_id'] = $tmp;
                 
                 $order = 'a.update_time desc ';
                 $poly_result = $m_pub_poly_ads->getList($fields, $where,$order);
