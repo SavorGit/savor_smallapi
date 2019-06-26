@@ -33,6 +33,9 @@ class Tvchannel extends Base{
         $orderby = 'a.play_number asc';
         $where = array('a.hotel_id'=>$hotel_id,'a.type'=>$box_type);
         $res_tvchannel = $m_tvchannel->getCustomList($fields,$where,$orderby);
+        if(empty($res_tvchannel)){
+            $this->to_back(10301);
+        }
 
         $tvChannelList = array();
         $lockingChannelNum = '';
