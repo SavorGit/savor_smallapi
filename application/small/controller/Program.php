@@ -237,7 +237,14 @@ class Program extends Base{
             $m_program_menu_item = new \app\small\model\ProgramMenuItem();
             $adv_result = $m_program_menu_item->getadvInfo($hotel_id, $menu_info['menu_id']);
             if(empty($adv_result)){
-                $this->to_back(10102);
+                
+                $data['version']['label'] = '宣传片期号';
+                $data['version']['type']  = 'adv';
+                $data['version']['version'] = '20190101000000'.$menu_info['menu_num'];
+                $data['menu_num'] =  $menu_info['menu_num'];                             
+                
+                $this->to_back($data);
+                //$this->to_back(10102);
             }
             
             $adv_tmp = array();
