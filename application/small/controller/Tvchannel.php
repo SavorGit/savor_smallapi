@@ -67,10 +67,11 @@ class Tvchannel extends Base{
         $m_hotel = new \app\small\model\Hotel();
         $res_hotel = $m_hotel->getInfo(array('id'=>$hotel_id),'hotel_box_type');
         $box_type = $res_hotel['hotel_box_type'];//1一代单机版,2二代网络版,3二代5G版,4二代单机版,5三代单机版,6三代网络版,
-        if(!in_array($box_type,array(2,6))){
+        if(!in_array($box_type,array(2,3,6))){
             $this->to_back(10300);
         }
-        $box_type = $box_type==6?3:$box_type;
+        $box_types = array('2'=>2,'3'=>2,'6'=>3);
+        $box_type = $box_types[$box_type];
         $m_tvchannel = new \app\small\model\Tvchannel();
         $m_tvchannelext = new \app\small\model\TvchannelExt();
         $where = array('hotel_id'=>$hotel_id,'type'=>$box_type);
