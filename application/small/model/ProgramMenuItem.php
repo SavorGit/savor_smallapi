@@ -49,6 +49,7 @@ class ProgramMenuItem extends Base
         when 3 then 'adv'
         when 4 then 'rtbads'
         when 5 then 'poly'
+        when 6 then 'actgoods'
         END AS type
         FROM savor_programmenu_item WHERE menu_id=$menuid and  type in($type_str) order by sort_num asc";
         $result = $this->query($sql);
