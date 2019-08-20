@@ -147,9 +147,9 @@ class Program extends Base{
             }
             $pro_list['media_lib'] = $pro_tmp;
             //节目结束
-            //广告、宣传片、rtb广告、聚屏广告占位符开始 1 ads 3 adv  4 rtb 5 poly
+            //广告、宣传片、rtb广告、聚屏广告占位符开始 1 ads 3 adv  4 rtb 5 poly 6 actgoods 7 assist
             $ads_result = $m_program_menu_item->getMenuAdsPlaceholder($menu_info['menu_id'], '1,3,4,5,6');
-            $ads_tmp = $adv_tmp = $rtb_tmp = $poly_tmp = $actgoods_tmp = array();
+            $ads_tmp = $adv_tmp = $rtb_tmp = $poly_tmp = $actgoods_tmp = $assist_tmp = array();
             foreach($ads_result as $key=>$v){
                 $ads_arr['chinese_name'] = $v['chinese_name'];
                 $ads_arr['period']       = $menu_info['menu_num'];
@@ -171,6 +171,8 @@ class Program extends Base{
                     $poly_tmp[] = $ads_arr;
                 }else  if($v['type']=='actgoods'){
                     $actgoods_tmp[] = $ads_arr;
+                }else if($v['type']=='selectcontent'){
+                    $assist_tmp[] = $ads_arr;
                 }
             }
             $adv_list['version']['label'] = '宣传片占位符期号';
@@ -197,6 +199,11 @@ class Program extends Base{
             $actgoods_list['version']['type']  ='actgoods';
             $actgoods_list['version']['version'] = $menu_info['menu_num'];
             $actgoods_list['media_lib'] = $actgoods_tmp;
+            
+            $assist_list['version']['lable'] = '用户精选内容';
+            $assist_list['version']['type']  = 'assist';
+            $assist_list['version']['version'] = $menu_info['menu_num'];
+            $assist_list['media_lib'] = $assist_tmp;
             
             $data['playbill_list'] = array($pro_list,$adv_list,$ads_list,$rtb_list,$poly_list,$actgoods_list);
             $data['pub_time'] = $menu_info['pub_time'];
