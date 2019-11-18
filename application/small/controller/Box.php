@@ -19,6 +19,7 @@ class Box extends Base{
         $box_mac = $this->params['boxMac'];
         $m_hotel = new \app\small\model\Hotel();
         $res_hotelbox = $m_hotel->getHotelInfo($box_mac);
+        if(empty($res_hotelbox)) $this->to_back(10100);
         $res_box = array('switch_time'=>$res_hotelbox['switch_time'],'volume'=>$res_hotelbox['volum'],'hotel_id'=>$res_hotelbox['hotel_id'],
             'room_id'=>$res_hotelbox['room_id'],'hotel_name'=>$res_hotelbox['hotel_name'],'room_name'=>$res_hotelbox['room_name'],
             'box_id'=>$res_hotelbox['box_id'],'box_name'=>$res_hotelbox['box_name'],'area_id'=>$res_hotelbox['area_id'],
@@ -105,6 +106,8 @@ class Box extends Base{
         $fields = 'id as tv_id,box_id,tv_brand as tv_Brand,tv_size,tv_source,flag,state';
         $where = array('box_id'=>$res_box['box_id']);
         $res_box['tv_list'] = $m_tv->getDataList($fields,$where,'');
+        $res_box['bootvideo']['url'] = 'http://oss.littlehotspot.com/media/resource/ntfrQRRH2M.mp4';
+        $res_box['bootvideo']['md5'] = 'af6066f8b89b3290276b4ff87a93d265';
 
         $this->to_back($res_box);
     }
