@@ -31,7 +31,7 @@ class PubAdsBox extends Base
         ->field("b.create_time")
         ->where('a.box_id='.$box_id." and b.end_date>'".$now_date.
                 "' and b.state=1 ")
-        ->order('b.start_date desc')
+        ->order('b.id desc')
         ->limit(1)
         ->find();
         return $data;
