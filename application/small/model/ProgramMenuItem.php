@@ -47,7 +47,7 @@ class ProgramMenuItem extends Base
         case type
         when 1 then 'ads'
         when 3 then 'adv'
-        when 4 then 'rtbads'
+        when 4 then 'shopgoods'
         when 5 then 'poly'
         when 6 then 'actgoods'
         when 7 then 'selectcontent'
