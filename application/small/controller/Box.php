@@ -101,6 +101,7 @@ class Box extends Base{
         $res_box['project_volume'] = $sysconfig['system_pro_screen_volume'];
         $res_box['demand_volume'] = $sysconfig['system_demand_video_volume'];
         $res_box['tv_volume'] = $sysconfig['system_tv_volume'];
+        $res_box['forscreen_volume'] = $sysconfig['system_for_screen_volume'];
 
         $m_tv = new \app\small\model\Tv();
         $fields = 'id as tv_id,box_id,tv_brand as tv_Brand,tv_size,tv_source,flag,state';
