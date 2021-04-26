@@ -11,6 +11,12 @@ class DeviceUpgrade extends Base{
         $sql =" select id,version,update_type from savor_device_upgrade where device_type=$device_type 
 	            and  (hotel_id LIKE '%,{$hotelid},%' OR hotel_id IS NULL) $where order by id desc limit 1";
         $result = $this->query($sql);
-        return $result[0];
+        if(empty($result)){
+            return array();
+        }else {
+            
+            return $result[0];
+        }
+        
     }
 }
