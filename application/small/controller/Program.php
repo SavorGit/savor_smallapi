@@ -359,7 +359,7 @@ class Program extends Base{
             $data = $ads_list;
             $data['media_lib'] = $ads_tmp;
             $data['menu_num'] = $ads_period;
-            $redis->set($cache_key, json_encode($data),$this->expire);
+            $redis->set($cache_key, json_encode($data),14400);
             $this->to_back($data);
         }else {
             $data = json_decode($redis_result,true);
