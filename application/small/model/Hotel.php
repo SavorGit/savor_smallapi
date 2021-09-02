@@ -7,8 +7,8 @@ class Hotel extends Base
         $m_box = new \app\small\model\Box();
         $where = array();
         $where['mac']  = $box_mac;
-        $where['flag'] = 0;
         $where['state']= 1;
+        $where['flag'] = 0;
         $box_result = $m_box->getInfo($where,'id box_id');
         $redis  = \SavorRedis::getInstance();
         $redis->select(15);
@@ -25,8 +25,8 @@ class Hotel extends Base
                    room.id room_id,room.name room_name,room.type room_type,room.probe,room.flag room_flag,room.state room_state';
             $where = array();
             $where['mac'] = $box_mac;
-            $where['a.flag']= 0;
             $where['a.state'] = 1;
+            $where['a.flag']= 0;
             $where['hotel.flag'] = 0;
             $where['hotel.state']= 1;
             $result = $m_box->getHotelBoxInfo($fields, $where);
