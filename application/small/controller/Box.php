@@ -34,7 +34,14 @@ class Box extends Base{
         $m_sysconfig = new \app\small\model\SysConfig();
         $sysconfig = $m_sysconfig->getAllconfig();
         $loading_mediaid = $sysconfig['system_loading_image'];
-
+        $config_volume = array(
+            'box_carousel_volume'=>'机顶盒轮播音量','box_pro_demand_volume'=>'机顶盒公司节目点播音量','box_content_demand_volume'=>'机顶盒用户内容点播音量','box_video_froscreen_volume'=>'机顶盒视频投屏音量','box_img_froscreen_volume'=>'机顶盒图片投屏音量','box_tv_volume'=>'机顶盒电视音量',
+            'tv_carousel_volume'=>'电视轮播音量','tv_pro_demand_volume'=>'电视公司节目点播音量','tv_content_demand_volume'=>'电视用户内容点播音量','tv_video_froscreen_volume'=>'电视视频投屏音量','tv_img_froscreen_volume'=>'电视图片投屏音量',
+        );
+        $sys_vol_data = array();
+        foreach ($config_volume as $k=>$v){
+            $sys_vol_data[]=array('label'=>$v,'configKey'=>$k,'configValue'=>$sysconfig[$k]);
+        }
         $m_media = new \app\small\model\Media();
         $fields = 'id,md5,oss_addr';
         $where = array('id'=>[$logo_mediaid,$loading_mediaid]);
@@ -102,7 +109,7 @@ class Box extends Base{
         $res_box['demand_volume'] = $sysconfig['system_demand_video_volume'];
         $res_box['tv_volume'] = $sysconfig['system_tv_volume'];
         $res_box['forscreen_volume'] = $sysconfig['system_for_screen_volume'];
-
+        $res_box['sys_volume']= json_encode($sys_vol_data,JSON_UNESCAPED_UNICODE);
         $m_tv = new \app\small\model\Tv();
         $fields = 'id as tv_id,box_id,tv_brand as tv_Brand,tv_size,tv_source,flag,state';
         $where = array('box_id'=>$res_box['box_id']);
