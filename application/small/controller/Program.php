@@ -146,8 +146,8 @@ class Program extends Base{
             $pro_list['media_lib'] = $pro_tmp;
             //节目结束
             //广告、宣传片、rtb广告、聚屏广告占位符开始 1 ads 3 adv  4 rtb 5 poly
-            $ads_result = $m_program_menu_item->getMenuAdsPlaceholder($menu_info['menu_id'], '1,3,4,5,6,7,8');
-            $ads_tmp = $adv_tmp = $shopgoods_tmp = $poly_tmp = $actgoods_tmp = $selectcontent_tmp= $life_tmp = array();
+            $ads_result = $m_program_menu_item->getMenuAdsPlaceholder($menu_info['menu_id'], '1,3,4,5,6,7,8,9');
+            $ads_tmp = $adv_tmp = $shopgoods_tmp = $poly_tmp = $actgoods_tmp = $selectcontent_tmp= $life_tmp = $storesale_tmp = array();
             foreach($ads_result as $key=>$v){
                 $ads_arr['chinese_name'] = $v['chinese_name'];
                 $ads_arr['period']       = $menu_info['menu_num'];
@@ -172,6 +172,8 @@ class Program extends Base{
                     $selectcontent_tmp[] = $ads_arr;
                 }elseif($v['type']=='life'){
                     $life_tmp[] = $ads_arr;
+                }elseif($v['type']=='storesale'){
+                    $storesale_tmp[] = $ads_arr;
                 }
             }
             $adv_list['version']['label'] = '宣传片占位符期号';
@@ -209,7 +211,12 @@ class Program extends Base{
             $life_list['version']['version'] = $menu_info['menu_num'];
             $life_list['media_lib'] = $life_tmp;
 
-            $data['playbill_list'] = array($pro_list,$adv_list,$ads_list,$rtb_list,$poly_list,$actgoods_list,$selectcontent_list,$life_list);
+            $storesale_list['version']['lable'] ='本店有售占位符期号';
+            $storesale_list['version']['type']  ='storesale';
+            $storesale_list['version']['version'] = $menu_info['menu_num'];
+            $storesale_list['media_lib'] = $storesale_tmp;
+
+            $data['playbill_list'] = array($pro_list,$adv_list,$ads_list,$rtb_list,$poly_list,$actgoods_list,$selectcontent_list,$life_list,$storesale_list);
             $data['pub_time'] = $menu_info['pub_time'];
             $redis->set($cache_key, json_encode($data),$this->expire);
             $this->to_back($data);
