@@ -321,6 +321,12 @@ class Program extends Base{
             $this->to_back(10100);
         }
         $redis = \SavorRedis::getInstance();
+        $redis->select(12);
+        $program_ads_menu_num = $redis->get('program_ads_menu_num');
+        
+        
+        
+        
         $redis->select(10);
         $cache_key = config('cache.prefix').'ads:'.$result['hotel_id'].":".$box_mac;
         $redis_result = $redis->get($cache_key);
@@ -344,7 +350,8 @@ class Program extends Base{
                 $ads_tmp[$key]['vid']     = intval($v['id']);
                 $ads_tmp[$key]['name']    = $v['name'];
                 $ads_tmp[$key]['chinese_name'] = $v['chinese_name'];
-                $ads_tmp[$key]['period']  = $ads_period;
+                //$ads_tmp[$key]['period']  = $program_ads_menu_num.$ads_period;
+                $ads_tmp[$key]['period']  = $program_ads_menu_num;
                 $ads_tmp[$key]['type']    = 'ads';
                 $ads_tmp[$key]['md5']     = $v['md5'];
                 $ads_tmp[$key]['duration']= intval($v['duration']);
@@ -362,10 +369,12 @@ class Program extends Base{
             }
             $ads_list['version']['label'] = '广告期号';
             $ads_list['version']['type']  = 'ads';
-            $ads_list['version']['version'] = $ads_period;
+            ///$ads_list['version']['version'] = $program_ads_menu_num.$ads_period;
+            $ads_list['version']['version'] = $program_ads_menu_num;
             $data = $ads_list;
             $data['media_lib'] = $ads_tmp;
-            $data['menu_num'] = $ads_period;
+            //$data['menu_num'] = $program_ads_menu_num.$ads_period;
+            $data['menu_num'] = $program_ads_menu_num;
             $redis->set($cache_key, json_encode($data),14400);
             $this->to_back($data);
         }else {
