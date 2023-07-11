@@ -132,6 +132,7 @@ class Base extends Controller{
         $this->headerinfo['boxMac'] = isset($_SERVER['HTTP_BOXMAC'])?$_SERVER['HTTP_BOXMAC']:'';
         $this->headerinfo['hotelId'] = isset($_SERVER['HTTP_HOTELID'])?$_SERVER['HTTP_HOTELID']:0;
         $this->headerinfo['X-VERSION'] = isset($_SERVER['HTTP_X_VERSION'])?$_SERVER['HTTP_X_VERSION']:'';
+        $this->headerinfo['MODEL'] = isset($_SERVER['HTTP_MODEL'])?$_SERVER['HTTP_MODEL']:'';
         return true;
     }
 

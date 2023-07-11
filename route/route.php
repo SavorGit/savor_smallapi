@@ -10,6 +10,7 @@ Route::rule('small/api/download/ads/config','small/Program/getads');
 Route::rule('small/api/download/poly/config','small/Program/getpoly');
 Route::rule('small/api/download/demand/config','small/Demand/getdemand');
 Route::rule('small/api/download/apk/config','small/Upgrade/boxupgrade');
-return [
 
+return [
+    
 ];
